@@ -6,18 +6,20 @@ enum Tree<T> {
 
 impl<T: std::fmt::Debug> Tree<T> {
     fn iter(&self) -> impl Iterator<Item = &T> {
-        fn traverse_depth<'b, U: std::fmt::Debug>(
-            start: &'b Tree<U>,
-            stack: &mut Vec<std::slice::Iter<'b, Tree<U>>>,
-        ) -> Option<std::slice::Iter<'b, U>> {
+        fn traverse_depth<'a, U: std::fmt::Debug>(
+            start: &'a Tree<U>,
+            stack: &mut Vec<std::slice::Iter<'a, Tree<U>>>,
+        ) -> Option<std::slice::Iter<'a, U>> {
             let mut node = start;
             loop {
                 match *node {
                     Tree::Leaf(ref items) => break Some(items.iter()),
-                    Tree::Children(ref children) => stack.push(children.iter()),
+                    Tree::Children(ref children) => {
+                        stack.push(children.iter())
+                    }
                 }
 
-                // stack is std::slice::Iter<'b, U> where U is the type of the ultimate value
+                // stack is std::slice::Iter<'a, U> where U is the type of the ultimate value
                 //
                 // stack.last_mut() grabs the last iterator (e.g. an iterator of Tree::Leaf or
                 // Tree::Children, not the Leaf or Children itself)
@@ -66,7 +68,10 @@ fn main() {
         Tree::Children(vec![
             Tree::Leaf(vec![9, 10]),
             Tree::Leaf(vec![11, 12]),
-            Tree::Children(vec![Tree::Leaf(vec![13, 14]), Tree::Leaf(vec![15, 16])]),
+            Tree::Children(vec![
+                Tree::Leaf(vec![13, 14]),
+                Tree::Leaf(vec![15, 16]),
+            ]),
             Tree::Leaf(vec![17, 18]),
         ]),
         Tree::Leaf(vec![19, 20]),
@@ -84,7 +89,10 @@ fn test_1() {
         Tree::Children(vec![
             Tree::Leaf(vec![9, 10]),
             Tree::Leaf(vec![11, 12]),
-            Tree::Children(vec![Tree::Leaf(vec![13, 14]), Tree::Leaf(vec![15, 16])]),
+            Tree::Children(vec![
+                Tree::Leaf(vec![13, 14]),
+                Tree::Leaf(vec![15, 16]),
+            ]),
             Tree::Leaf(vec![17, 18]),
         ]),
         Tree::Leaf(vec![19, 20]),
