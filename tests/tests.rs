@@ -1,7 +1,8 @@
 #![warn(clippy::pedantic)]
 use treeiter::Tree;
 
-fn main() {
+#[test]
+fn it_works() {
     let tree = Tree::Children(vec![
         Tree::Leaf(vec![1u32, 2, 3, 4]),
         Tree::Leaf(vec![5, 6, 7, 8]),
@@ -16,7 +17,6 @@ fn main() {
         ]),
         Tree::Leaf(vec![19, 20]),
     ]);
-    dbg!(&tree);
-    let res: Vec<_> = tree.iter().collect();
-    dbg!(&res);
+    let res: Vec<_> = tree.iter().copied().collect();
+    assert_eq!(&res, &(1..=20).collect::<Vec<u32>>());
 }
